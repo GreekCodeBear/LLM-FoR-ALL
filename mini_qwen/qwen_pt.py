@@ -18,6 +18,7 @@ TMP_PATH = "/archive/share/cql/aaa/tmp"
 DATA_PATH = "data/pt"
 OUTPUT_PATH = "results/pt"
 CONFIG_PATH = "models/Qwen2.5-0.5B"
+WANDB_LOG = True
 os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'max_split_size_mb:64'
 
 output_path = OUTPUT_PATH
@@ -26,23 +27,13 @@ config = AutoConfig.from_pretrained(model_path)
 model = AutoModelForCausalLM.from_config(config, torch_dtype=torch.bfloat16, attn_implementation="flash_attention_2")
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 
-num_params = sum(p.numel() for p in model.parameters())
-print(f"Total Parameters: {num_params}")
-
 tokenized_datapath = os.path.join(DATA_PATH, "tokenized_dataset")
 
 if not os.path.isdir(tokenized_datapath):
     directories = [
-        # "accommodation_catering_hotel",
-        # "artificial_intelligence_machine_learning",
-        # "computer_communication",
-        # "computer_programming_code",
         "film_entertainment",
         "literature_emotion",
         "news_media",
-        # "tourism_geography",
-        # "current_affairs_government_administration",
-        # "mathematics_statistics",
     ]
     data_files = find_files(directories)
     dataset = load_dataset("parquet", data_files=data_files, split="train", columns=["text"], cache_dir=TMP_PATH) 
@@ -71,19 +62,23 @@ training_args = TrainingArguments(
     warmup_ratio=0.1,
     lr_scheduler_type="cosine",
     num_train_epochs=3,
-    per_device_train_batch_size=16,
+    per_device_train_batch_size=24,
     gradient_accumulation_steps=16,
     save_steps=10_000, 
     save_total_limit=3,
     gradient_checkpointing=True,
     bf16=True,
-    logging_steps=20,
+    logging_steps=10,
     report_to="wandb",
 )
 
-wandb.init(project="qwen-0.5B-pt", config=training_args)
+if WANDB_LOG:
+    wandb.login()
+    wandb.init(
+        project="qwen-0.5B-pt",name="qwen-0.5B-pt"
+    )
 
-optimizer = AdamW(model.parameters(), lr=1e-5, weight_decay=0.01)
+# optimizer = AdamW(model.parameters(), lr=1e-5, weight_decay=0.01)
 
 # 初始化Trainer
 trainer = Trainer(
@@ -91,7 +86,7 @@ trainer = Trainer(
     args=training_args,
     data_collator=collator,
     train_dataset=train_dataset,
-    optimizers=(optimizer, None)  
+    # optimizers=(optimizer, None)  
 )
 torch.cuda.empty_cache()
 
