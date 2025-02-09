@@ -1,0 +1,4 @@
+datasets==3.2.0
+matplotlib==3.10.0
+torch==2.5.1+cu118
+transformers==4.45.0
