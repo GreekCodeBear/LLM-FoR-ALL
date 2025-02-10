@@ -70,6 +70,7 @@ trainer = SFTTrainer(
     model=model,
     train_dataset=train_dataset,
     eval_dataset=valid_dataset,
+    # peft_config=lora_config, #是否启用lora
     args=training_args,
     formatting_func=formatting_prompts_func,
     data_collator=collator,
