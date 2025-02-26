@@ -2,9 +2,9 @@ import torch
 from peft import PeftConfig, PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-AdapterModelPath = "results/sft/checkpoint-5000"
-BaseModelPath = "results/sft/checkpoint-5000"
-OutputPath = "results/sft/final_model"
+AdapterModelPath = "/archive/share/cql/LLM-FoR-ALL/mini_qwen/results/rm/Qwen2.5-0.5B_peft_stack-exchange-paired__0_2e-05/checkpoint-1908"
+BaseModelPath = "/archive/share/cql/LLM-FoR-ALL/mini_qwen/data/Qwen2.5-0.5B"
+OutputPath = "results/rm/final_model"
 
 model = AutoModelForCausalLM.from_pretrained(
     BaseModelPath, return_dict=True, torch_dtype=torch.bfloat16

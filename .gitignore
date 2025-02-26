@@ -2,10 +2,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
-data/
-results/
-wandb/
-scripts/
+mini_qwen/data/
+mini_qwen/logs/
+mini_qwen/results/
+mini_qwen/wandb/
+mini_qwen/scripts/
 
 # C extensions
 *.so 
