@@ -11,7 +11,7 @@ from transformers import (
     TrainingArguments,
     AdamW,
 )
-from utils import find_files,tokenize_dataset
+from utils.utils import find_files,tokenize_dataset
 
 TRUNK_SIZE = 512
 TMP_PATH = "/archive/share/cql/aaa/tmp"

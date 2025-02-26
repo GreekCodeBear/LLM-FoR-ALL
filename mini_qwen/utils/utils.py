@@ -1,6 +1,24 @@
 import os
 from itertools import chain
 
+def collator_ppo(data):
+    # for PPO use
+    return {key: [d[key] for d in data] for key in data[0]}
+
+def preprocess_ppo_dataset(examples,tokenizer):
+    # for PPO use
+        new_examples = {
+            "query": [],
+            "input_ids": [],
+        }
+        for question in examples["question"]:
+            query = "Question: " + question + "\n\nAnswer: "
+            tokenized_question = tokenizer(query, truncation=True)
+            new_examples["query"].append(query)
+            new_examples["input_ids"].append(tokenized_question["input_ids"])
+
+        return new_examples
+
 def preprocess_rm_dataset(examples,tokenizer):
     # for RM use
     # Turn the dataset into pairs of post + summaries, where text_j is the preferred question + answer and text_k is the other.
